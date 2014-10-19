@@ -1303,6 +1303,7 @@ end
 function M.get_var_attributes(ast)
   local vast = ast.seevalue or ast
   local attributes = {}
+
   if ast.localdefinition then
     attributes[#attributes+1] = "local"
     if ast.localdefinition.functionlevel < ast.functionlevel then
@@ -1322,8 +1323,13 @@ function M.get_var_attributes(ast)
       attributes[#attributes+1] = "masked"
     end
   elseif ast.tag == 'Id' then -- global
-    attributes[#attributes+1] = (M.is_known_value(vast) and "known" or "unknown")
-    attributes[#attributes+1] = "global"
+    if type(ast.definedglobal) == "table" then
+      attributes[#attributes+1] = "unknown"
+      attributes[#attributes+1] = "localdefined global"
+    else
+      attributes[#attributes+1] = (M.is_known_value(vast) and "known" or "unknown")
+      attributes[#attributes+1] = "global"
+    end
   elseif ast.isfield then
     attributes[#attributes+1] = (M.is_known_value(vast) and "known" or "unknown")
     attributes[#attributes+1] = "field"
@@ -1366,7 +1372,7 @@ function M.get_value_details(ast, tokenlist, src)
     local location = path .. ":" .. (fline) .. (fcol and ":" .. fcol or "")
     lines[#lines+1] = "location defined: " .. location
   end
-  
+
   if ast.localdefinition and ast.localmasking then
       local fpos = LA.ast_pos_range(ast.localmasking, tokenlist)
       if fpos then
