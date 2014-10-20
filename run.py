@@ -1,9 +1,10 @@
 
 
 import os
+import sys
 import shutil
 
-top = "/Users/rainfiel/Desktop/Work/dapili/trunk/tech/rawres/script"
+top = sys.argv[1]
 top_folders = top.split("/")
 
 def inspect(lua, html, htmllib):
@@ -46,5 +47,6 @@ def prepare():
 	os.mkdir("output")
 
 if __name__ == "__main__":
+	print("............")
 	prepare()
 	walk()
